@@ -15,6 +15,7 @@ function LoginRegister({ onLoginSuccess }) {
   const [registerOccupation, setRegisterOccupation] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [confirmError, setConfirmError] = useState(""); // Thêm state cho lỗi confirm
 
   const handleLogin = async () => {
     setError("");
@@ -194,8 +195,17 @@ function LoginRegister({ onLoginSuccess }) {
               size="small"
               type="password"
               value={registerConfirm}
-              onChange={(e) => setRegisterConfirm(e.target.value)}
+              onChange={(e) => {
+                setRegisterConfirm(e.target.value);
+                setConfirmError(
+                  registerPassword && e.target.value !== registerPassword
+                    ? "Passwords do not match"
+                    : ""
+                );
+              }}
               onKeyDown={handleKeyDown}
+              error={!!confirmError}
+              helperText={confirmError}
             />
             <TextField
               label="First Name"
