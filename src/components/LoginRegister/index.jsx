@@ -1,10 +1,20 @@
 import React, { useState } from "react";
-import { Box, Button, TextField, Typography, Paper } from "@mui/material";
+import { Box, Button, TextField, Typography, Paper, Tabs, Tab } from "@mui/material";
 
 function LoginRegister({ onLoginSuccess }) {
+  const [mode, setMode] = useState("login"); // "login" hoặc "register"
   const [loginName, setLoginName] = useState("");
   const [password, setPassword] = useState("");
+  const [registerName, setRegisterName] = useState("");
+  const [registerPassword, setRegisterPassword] = useState("");
+  const [registerConfirm, setRegisterConfirm] = useState("");
+  const [registerFirstName, setRegisterFirstName] = useState("");
+  const [registerLastName, setRegisterLastName] = useState("");
+  const [registerLocation, setRegisterLocation] = useState("");
+  const [registerDescription, setRegisterDescription] = useState("");
+  const [registerOccupation, setRegisterOccupation] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const handleLogin = async () => {
     setError("");
@@ -30,9 +40,54 @@ function LoginRegister({ onLoginSuccess }) {
     }
   };
 
+  const handleRegister = async () => {
+    setError("");
+    setSuccess(""); // Reset thông báo thành công khi bắt đầu đăng ký
+    if (
+      !registerName ||
+      !registerPassword ||
+      !registerConfirm ||
+      !registerFirstName ||
+      !registerLastName
+    ) {
+      setError("Please fill in all required fields");
+      return;
+    }
+    if (registerPassword !== registerConfirm) {
+      setError("Passwords do not match");
+      return;
+    }
+    try {
+      const res = await fetch("http://localhost:8081/api/user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          login_name: registerName,
+          password: registerPassword,
+          first_name: registerFirstName,
+          last_name: registerLastName,
+          location: registerLocation,
+          description: registerDescription,
+          occupation: registerOccupation,
+        }),
+      });
+      if (!res.ok) {
+        setError("Register failed");
+        return;
+      }
+      setSuccess("Register success! Please login."); // Hiện thông báo thành công
+      setTimeout(() => {
+        setMode("login"); // Chuyển sang tab login sau 1.5 giây
+        setSuccess("");
+      }, 1500);
+    } catch {
+      setError("Server error");
+    }
+  };
+
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
-      handleLogin();
+      mode === "login" ? handleLogin() : handleRegister();
     }
   };
 
@@ -59,42 +114,145 @@ function LoginRegister({ onLoginSuccess }) {
           gap: 1.5,
         }}
       >
-        <Typography variant="h6" textAlign="center" mb={1}>
-          Please Login
-        </Typography>
-
-        <TextField
-          label="Login Name"
-          variant="outlined"
-          size="small"
-          value={loginName}
-          onChange={(e) => setLoginName(e.target.value)}
-          onKeyDown={handleKeyDown}
-          autoFocus
-        />
-        <TextField
-          label="Password"
-          variant="outlined"
-          size="small"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          onKeyDown={handleKeyDown}
-        />
-        {error && (
-          <Typography color="error" variant="body2" textAlign="center">
-            {error}
-          </Typography>
-        )}
-        <Button
-          variant="contained"
-          color="primary"
-          size="small"
-          onClick={handleLogin}
-          sx={{ mt: 1 }}
+        <Tabs
+          value={mode}
+          onChange={(_, v) => {
+            setMode(v);
+            setError("");
+          }}
+          variant="fullWidth"
+          sx={{ mb: 2 }}
         >
-          Login
-        </Button>
+          <Tab label="Login" value="login" />
+          <Tab label="Register" value="register" />
+        </Tabs>
+
+        {mode === "login" ? (
+          <>
+            <Typography variant="h6" textAlign="center" mb={1}>
+              Please Login
+            </Typography>
+            <TextField
+              label="Login Name"
+              variant="outlined"
+              size="small"
+              value={loginName}
+              onChange={(e) => setLoginName(e.target.value)}
+              onKeyDown={handleKeyDown}
+              autoFocus
+            />
+            <TextField
+              label="Password"
+              variant="outlined"
+              size="small"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={handleKeyDown}
+            />
+            {error && (
+              <Typography color="error" variant="body2" textAlign="center">
+                {error}
+              </Typography>
+            )}
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              onClick={handleLogin}
+              sx={{ mt: 1 }}
+            >
+              Login
+            </Button>
+          </>
+        ) : (
+          <>
+            <Typography variant="h6" textAlign="center" mb={1}>
+              Register
+            </Typography>
+            <TextField
+              label="Login Name"
+              variant="outlined"
+              size="small"
+              value={registerName}
+              onChange={(e) => setRegisterName(e.target.value)}
+              onKeyDown={handleKeyDown}
+              autoFocus
+            />
+            <TextField
+              label="Password"
+              variant="outlined"
+              size="small"
+              type="password"
+              value={registerPassword}
+              onChange={(e) => setRegisterPassword(e.target.value)}
+              onKeyDown={handleKeyDown}
+            />
+            <TextField
+              label="Confirm Password"
+              variant="outlined"
+              size="small"
+              type="password"
+              value={registerConfirm}
+              onChange={(e) => setRegisterConfirm(e.target.value)}
+              onKeyDown={handleKeyDown}
+            />
+            <TextField
+              label="First Name"
+              variant="outlined"
+              size="small"
+              value={registerFirstName}
+              onChange={(e) => setRegisterFirstName(e.target.value)}
+            />
+            <TextField
+              label="Last Name"
+              variant="outlined"
+              size="small"
+              value={registerLastName}
+              onChange={(e) => setRegisterLastName(e.target.value)}
+            />
+            <TextField
+              label="Location"
+              variant="outlined"
+              size="small"
+              value={registerLocation}
+              onChange={(e) => setRegisterLocation(e.target.value)}
+            />
+            <TextField
+              label="Description"
+              variant="outlined"
+              size="small"
+              value={registerDescription}
+              onChange={(e) => setRegisterDescription(e.target.value)}
+            />
+            <TextField
+              label="Occupation"
+              variant="outlined"
+              size="small"
+              value={registerOccupation}
+              onChange={(e) => setRegisterOccupation(e.target.value)}
+            />
+            {error && (
+              <Typography color="error" variant="body2" textAlign="center">
+                {error}
+              </Typography>
+            )}
+            {success && (
+              <Typography color="primary" variant="body2" textAlign="center">
+                {success}
+              </Typography>
+            )}
+            <Button
+              variant="contained"
+              color="primary"
+              size="small"
+              onClick={handleRegister}
+              sx={{ mt: 1 }}
+            >
+              Register
+            </Button>
+          </>
+        )}
       </Paper>
     </Box>
   );

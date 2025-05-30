@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Grid, Paper } from "@mui/material";
 import {Route, Routes, Navigate, useNavigate } from "react-router-dom";
 
@@ -8,10 +8,17 @@ import UserDetail from "./components/UserDetail";
 import UserList from "./components/UserList";
 import UserPhotos from "./components/UserPhotos";
 import LoginRegister from "./components/LoginRegister";
+import fetchModel from "./lib/fetchModelData";
 
 function App() {
   const [loggedInUser, setLoggedInUser] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchModel("http://localhost:8081/api/me").then((data) => {
+      if (data && !data.error) setLoggedInUser(data);
+    });
+  }, []);
 
   const handleLogout = async () => {
     await fetch("http://localhost:8081/api/admin/logout", {
