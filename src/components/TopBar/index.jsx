@@ -1,7 +1,8 @@
 import React from "react";
 import { AppBar, Toolbar, Typography, Button } from "@mui/material";
+import AddPhoto from "../AddPhoto";
 
-function TopBar({ loggedInUser, onLogout }) {
+function TopBar({ loggedInUser, onLogout, onPhotoAdded }) {
   return (
     <AppBar position="absolute">
       <Toolbar>
@@ -14,6 +15,14 @@ function TopBar({ loggedInUser, onLogout }) {
             <Typography variant="h6" sx={{ marginRight: 2 }}>
               Hi {loggedInUser.first_name}
             </Typography>
+            <Button
+              color="inherit"
+              sx={{ marginRight: 2 }}
+              onClick={() => document.getElementById("add-photo-input").click()}
+            >
+              Add Photo
+            </Button>
+            <AddPhoto onPhotoAdded={onPhotoAdded} />
             <Button color="inherit" onClick={onLogout}>
               Logout
             </Button>
