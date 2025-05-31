@@ -7,6 +7,8 @@ import {
   Box,
   Divider,
   Link as MuiLink,
+  TextField,
+  Button,
 } from "@mui/material";
 import { useParams, Link } from "react-router-dom";
 import fetchModel from "../../lib/fetchModelData";
@@ -14,27 +16,25 @@ import fetchModel from "../../lib/fetchModelData";
 function UserPhotos() {
   const { userId } = useParams();
   const [user, setUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null); // 👈 user đăng nhập từ session
   const [photos, setPhotos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [commentInputs, setCommentInputs] = useState({});
+  const [submitting, setSubmitting] = useState({});
 
   useEffect(() => {
     const fetchUserDataAndPhotos = async () => {
       try {
-        const userUrl = `http://localhost:8081/api/user/${userId}`;
-        const photosUrl = `http://localhost:8081/api/photosOfUser/${userId}`;
-
-        const [userData, photosData] = await Promise.all([
-          fetchModel(userUrl),
-          fetchModel(photosUrl),
+        const [userData, photosData, meData] = await Promise.all([
+          fetchModel(`http://localhost:8081/api/user/${userId}`),
+          fetchModel(`http://localhost:8081/api/photosOfUser/${userId}`),
+          fetchModel(`http://localhost:8081/api/me`),
         ]);
 
-        if (userData) setUser(userData);
-        else setError("Failed to load user data");
-
-        if (photosData) setPhotos(photosData);
-        else setError("Failed to load photos");
-
+        setUser(userData);
+        setPhotos(photosData);
+        setCurrentUser(meData);
         setLoading(false);
       } catch (err) {
         setError("Error fetching data");
@@ -48,6 +48,60 @@ function UserPhotos() {
   const formatDateTime = (dateTimeStr) => {
     const date = new Date(dateTimeStr);
     return date.toLocaleString();
+  };
+
+  const handleCommentInputChange = (photoId, value) => {
+    setCommentInputs((prev) => ({
+      ...prev,
+      [photoId]: value,
+    }));
+  };
+
+  const handleAddComment = async (photoId) => {
+    const commentText = commentInputs[photoId]?.trim();
+    if (!commentText || !currentUser) return;
+
+    setSubmitting((prev) => ({ ...prev, [photoId]: true }));
+
+    try {
+      const newComment = await fetchModel(
+        `http://localhost:8081/api/commentsOfPhoto/${photoId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ comment: commentText }),
+        }
+      );
+
+      const enrichedComment = {
+        ...newComment,
+        user: {
+          _id: currentUser._id,
+          first_name: currentUser.first_name,
+          last_name: currentUser.last_name,
+        },
+      };
+
+      setPhotos((prevPhotos) =>
+        prevPhotos.map((photo) =>
+          photo._id === photoId
+            ? {
+                ...photo,
+                comments: photo.comments
+                  ? [...photo.comments, enrichedComment]
+                  : [enrichedComment],
+              }
+            : photo
+        )
+      );
+      setCommentInputs((prev) => ({ ...prev, [photoId]: "" }));
+    } catch (err) {
+      alert("Could not add comment.");
+    } finally {
+      setSubmitting((prev) => ({ ...prev, [photoId]: false }));
+    }
   };
 
   if (loading) {
@@ -157,6 +211,47 @@ function UserPhotos() {
                   >
                     No comments on this photo.
                   </Typography>
+                )}
+
+                {/* ADD COMMENT INPUT */}
+                {currentUser && (
+                  <Box sx={{ mt: 2 }}>
+                    <TextField
+                      label="Add a comment"
+                      variant="outlined"
+                      size="small"
+                      fullWidth
+                      value={commentInputs[photo._id] || ""}
+                      onChange={(e) =>
+                        handleCommentInputChange(photo._id, e.target.value)
+                      }
+                      onKeyDown={(e) => {
+                        if (
+                          e.key === "Enter" &&
+                          !e.shiftKey &&
+                          !submitting[photo._id]
+                        ) {
+                          e.preventDefault();
+                          handleAddComment(photo._id);
+                        }
+                      }}
+                      multiline
+                      minRows={1}
+                      maxRows={4}
+                    />
+                    <Button
+                      sx={{ mt: 1 }}
+                      variant="contained"
+                      size="small"
+                      disabled={
+                        submitting[photo._id] ||
+                        !(commentInputs[photo._id] || "").trim()
+                      }
+                      onClick={() => handleAddComment(photo._id)}
+                    >
+                      {submitting[photo._id] ? "Posting..." : "Post"}
+                    </Button>
+                  </Box>
                 )}
               </CardContent>
             </Card>

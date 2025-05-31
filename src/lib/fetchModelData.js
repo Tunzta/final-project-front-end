@@ -1,7 +1,8 @@
-async function fetchModel(url) {
+async function fetchModel(url, options = {}) {
   try {
     const response = await fetch(url, {
       credentials: "include", // cookie session
+      ...options,
     });
 
     if (!response.ok) {

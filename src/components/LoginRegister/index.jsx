@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Box, Button, TextField, Typography, Paper, Tabs, Tab } from "@mui/material";
+import fetchModel from "../../lib/fetchModelData";
 
 function LoginRegister({ onLoginSuccess }) {
   const [mode, setMode] = useState("login"); // "login" hoặc "register"
@@ -24,17 +25,15 @@ function LoginRegister({ onLoginSuccess }) {
       return;
     }
     try {
-      const res = await fetch("http://localhost:8081/api/admin/login", {
+      const user = await fetchModel("http://localhost:8081/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
         body: JSON.stringify({ login_name: loginName, password }),
       });
-      if (!res.ok) {
+      if (!user) {
         setError("Wrong login name or password");
         return;
       }
-      const user = await res.json();
       onLoginSuccess(user);
     } catch {
       setError("Server error");
@@ -59,7 +58,7 @@ function LoginRegister({ onLoginSuccess }) {
       return;
     }
     try {
-      const res = await fetch("http://localhost:8081/api/user", {
+      const res = await fetchModel("http://localhost:8081/api/user", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -72,7 +71,7 @@ function LoginRegister({ onLoginSuccess }) {
           occupation: registerOccupation,
         }),
       });
-      if (!res.ok) {
+      if (!res) {
         setError("Register failed");
         return;
       }
