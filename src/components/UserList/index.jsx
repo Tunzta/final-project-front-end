@@ -20,7 +20,7 @@ function UserList() {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const url = "http://localhost:8081/api/user/list";
+      const url = "https://xtyjj4-8081.csb.app/api/user/list";
       const data = await fetchModel(url);
 
       if (data) {

@@ -17,7 +17,7 @@ function App() {
 
   useEffect(() => {
     // Gọi API /api/me để lấy lại user từ token (nếu có)
-    fetchModel("http://localhost:8081/api/me").then((data) => {
+    fetchModel("https://xtyjj4-8081.csb.app/api/me").then((data) => {
       if (data && !data.error) setLoggedInUser(data);
       else setLoggedInUser(null);
     });
@@ -54,10 +54,7 @@ function App() {
             <Grid item sm={9} xs={12}>
               <Paper className="main-grid-item">
                 <Routes>
-                  <Route
-                    path="/users/:userId"
-                    element={<UserDetail />}
-                  />
+                  <Route path="/users/:userId" element={<UserDetail />} />
                   <Route
                     path="/photos/:userId"
                     element={

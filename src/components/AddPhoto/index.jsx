@@ -25,7 +25,7 @@ function AddPhoto({ onPhotoAdded }, ref) {
 
     try {
       const data = await fetchModel(
-        "http://localhost:8081/api/photosOfUser/photos/new",
+        "https://xtyjj4-8081.csb.app/api/photosOfUser/photos/new",
         {
           method: "POST",
           body: formData,

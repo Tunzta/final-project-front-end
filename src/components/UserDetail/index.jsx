@@ -17,7 +17,7 @@ const UserDetail = () => {
     const fetchUserData = async () => {
       setLoading(true);
       setError(null);
-      const url = `http://localhost:8081/api/user/${userId}`;
+      const url = `https://xtyjj4-8081.csb.app/api/user/${userId}`;
       const data = await fetchModel(url);
 
       if (!ignore) {
@@ -33,7 +33,9 @@ const UserDetail = () => {
     };
 
     fetchUserData();
-    return () => { ignore = true; };
+    return () => {
+      ignore = true;
+    };
   }, [userId]);
 
   if (loading) {

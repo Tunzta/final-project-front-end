@@ -13,7 +13,7 @@ function PhotoCard({
   onAddComment,
   formatDateTime,
 }) {
-  const imageUrl = `http://localhost:8081/images/${photo.file_name}`;
+  const imageUrl = `https://xtyjj4-8081.csb.app/images/${photo.file_name}`;
 
   return (
     <Card sx={{ maxWidth: 600, mb: 4 }}>

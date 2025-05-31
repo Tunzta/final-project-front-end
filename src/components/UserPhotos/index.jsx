@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
-import {
-  Typography,
-  Box,
-} from "@mui/material";
+import { Typography, Box } from "@mui/material";
 import { useParams } from "react-router-dom";
 import fetchModel from "../../lib/fetchModelData";
 import PhotoCard from "./PhotoCard";
 import TopBar from "../TopBar"; // Thêm dòng này
 
-function UserPhotos({ photoAddedFlag, setPhotoAddedFlag, onLogout, loggedInUser }) {
+function UserPhotos({
+  photoAddedFlag,
+  setPhotoAddedFlag,
+  onLogout,
+  loggedInUser,
+}) {
   const { userId } = useParams();
   const [user, setUser] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
@@ -22,9 +24,9 @@ function UserPhotos({ photoAddedFlag, setPhotoAddedFlag, onLogout, loggedInUser 
     const fetchUserDataAndPhotos = async () => {
       try {
         const [userData, photosData, meData] = await Promise.all([
-          fetchModel(`http://localhost:8081/api/user/${userId}`),
-          fetchModel(`http://localhost:8081/api/photosOfUser/${userId}`),
-          fetchModel(`http://localhost:8081/api/me`),
+          fetchModel(`https://xtyjj4-8081.csb.app/api/user/${userId}`),
+          fetchModel(`https://xtyjj4-8081.csb.app/api/photosOfUser/${userId}`),
+          fetchModel(`https://xtyjj4-8081.csb.app/api/me`),
         ]);
 
         setUser(userData);
@@ -60,7 +62,7 @@ function UserPhotos({ photoAddedFlag, setPhotoAddedFlag, onLogout, loggedInUser 
 
     try {
       const newComment = await fetchModel(
-        `http://localhost:8081/api/commentsOfPhoto/${photoId}`,
+        `https://xtyjj4-8081.csb.app/api/commentsOfPhoto/${photoId}`,
         {
           method: "POST",
           headers: {

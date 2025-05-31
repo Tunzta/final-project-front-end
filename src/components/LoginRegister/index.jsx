@@ -27,7 +27,7 @@ function LoginRegister({ onLoginSuccess }) {
       return;
     }
     try {
-      const user = await fetchModel("http://localhost:8081/api/admin/login", {
+      const user = await fetchModel("https://xtyjj4-8081.csb.app/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ login_name: loginName, password }),
@@ -62,7 +62,7 @@ function LoginRegister({ onLoginSuccess }) {
       return;
     }
     try {
-      const res = await fetchModel("http://localhost:8081/api/user", {
+      const res = await fetchModel("https://xtyjj4-8081.csb.app/api/user", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
