@@ -1,7 +1,7 @@
 import "./App.css";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Grid, Paper } from "@mui/material";
-import {Route, Routes, Navigate, useNavigate } from "react-router-dom";
+import { Route, Routes, Navigate, useNavigate } from "react-router-dom";
 
 import TopBar from "./components/TopBar";
 import UserDetail from "./components/UserDetail";
@@ -12,6 +12,7 @@ import fetchModel from "./lib/fetchModelData";
 
 function App() {
   const [loggedInUser, setLoggedInUser] = useState(null);
+  const [photoAddedFlag, setPhotoAddedFlag] = useState(false); // Thêm state này
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,24 +30,44 @@ function App() {
     navigate("/");
   };
 
+  // gọi khi upload ảnh thành công
+  const handlePhotoAdded = () => {
+    setPhotoAddedFlag((f) => !f);
+  };
+
   return (
     <>
-      <TopBar loggedInUser={loggedInUser} onLogout={handleLogout} />
+      <TopBar
+        loggedInUser={loggedInUser}
+        onLogout={handleLogout}
+        onPhotoAdded={handlePhotoAdded}
+      />
       <div className="main-topbar-buffer" />
       <Grid container spacing={2}>
         {loggedInUser ? (
           <>
-            <Grid item sm={3}>
+            <Grid item sm={3} xs={12}>
               <Paper className="main-grid-item">
                 <UserList />
               </Paper>
             </Grid>
-            <Grid item sm={9}>
+            <Grid item sm={9} xs={12}>
               <Paper className="main-grid-item">
                 <Routes>
-                  <Route path="/users/:userId" element={<UserDetail />} />
-                  <Route path="/photos/:userId" element={<UserPhotos />} />
-                  <Route path="*" element={<Navigate to={`/users/${loggedInUser._id}`} />} />
+                  <Route
+                    path="/users/:userId"
+                    element={<UserDetail />}
+                  />
+                  <Route
+                    path="/photos/:userId"
+                    element={
+                      <UserPhotos photoAddedFlag={photoAddedFlag} />
+                    }
+                  />
+                  <Route
+                    path="*"
+                    element={<Navigate to={`/users/${loggedInUser._id}`} />}
+                  />
                 </Routes>
               </Paper>
             </Grid>

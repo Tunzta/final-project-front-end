@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { Box, Button, TextField, Typography, Paper, Tabs, Tab } from "@mui/material";
+import { Box, Paper, Tabs, Tab } from "@mui/material";
 import fetchModel from "../../lib/fetchModelData";
+import LoginForm from "./LoginForm";
+import RegisterForm from "./RegisterForm";
 
 function LoginRegister({ onLoginSuccess }) {
-  const [mode, setMode] = useState("login"); // "login" hoặc "register"
+  const [mode, setMode] = useState("login");
   const [loginName, setLoginName] = useState("");
   const [password, setPassword] = useState("");
   const [registerName, setRegisterName] = useState("");
@@ -128,139 +130,46 @@ function LoginRegister({ onLoginSuccess }) {
         </Tabs>
 
         {mode === "login" ? (
-          <>
-            <Typography variant="h6" textAlign="center" mb={1}>
-              Please Login
-            </Typography>
-            <TextField
-              label="Login Name"
-              variant="outlined"
-              size="small"
-              value={loginName}
-              onChange={(e) => setLoginName(e.target.value)}
-              onKeyDown={handleKeyDown}
-              autoFocus
-            />
-            <TextField
-              label="Password"
-              variant="outlined"
-              size="small"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              onKeyDown={handleKeyDown}
-            />
-            {error && (
-              <Typography color="error" variant="body2" textAlign="center">
-                {error}
-              </Typography>
-            )}
-            <Button
-              variant="contained"
-              color="primary"
-              size="small"
-              onClick={handleLogin}
-              sx={{ mt: 1 }}
-            >
-              Login
-            </Button>
-          </>
+          <LoginForm
+            loginName={loginName}
+            password={password}
+            error={error}
+            onLoginNameChange={(e) => setLoginName(e.target.value)}
+            onPasswordChange={(e) => setPassword(e.target.value)}
+            onLogin={handleLogin}
+            onKeyDown={handleKeyDown}
+          />
         ) : (
-          <>
-            <Typography variant="h6" textAlign="center" mb={1}>
-              Register
-            </Typography>
-            <TextField
-              label="Login Name"
-              variant="outlined"
-              size="small"
-              value={registerName}
-              onChange={(e) => setRegisterName(e.target.value)}
-              onKeyDown={handleKeyDown}
-              autoFocus
-            />
-            <TextField
-              label="Password"
-              variant="outlined"
-              size="small"
-              type="password"
-              value={registerPassword}
-              onChange={(e) => setRegisterPassword(e.target.value)}
-              onKeyDown={handleKeyDown}
-            />
-            <TextField
-              label="Confirm Password"
-              variant="outlined"
-              size="small"
-              type="password"
-              value={registerConfirm}
-              onChange={(e) => {
-                setRegisterConfirm(e.target.value);
-                setConfirmError(
-                  registerPassword && e.target.value !== registerPassword
-                    ? "Passwords do not match"
-                    : ""
-                );
-              }}
-              onKeyDown={handleKeyDown}
-              error={!!confirmError}
-              helperText={confirmError}
-            />
-            <TextField
-              label="First Name"
-              variant="outlined"
-              size="small"
-              value={registerFirstName}
-              onChange={(e) => setRegisterFirstName(e.target.value)}
-            />
-            <TextField
-              label="Last Name"
-              variant="outlined"
-              size="small"
-              value={registerLastName}
-              onChange={(e) => setRegisterLastName(e.target.value)}
-            />
-            <TextField
-              label="Location"
-              variant="outlined"
-              size="small"
-              value={registerLocation}
-              onChange={(e) => setRegisterLocation(e.target.value)}
-            />
-            <TextField
-              label="Description"
-              variant="outlined"
-              size="small"
-              value={registerDescription}
-              onChange={(e) => setRegisterDescription(e.target.value)}
-            />
-            <TextField
-              label="Occupation"
-              variant="outlined"
-              size="small"
-              value={registerOccupation}
-              onChange={(e) => setRegisterOccupation(e.target.value)}
-            />
-            {error && (
-              <Typography color="error" variant="body2" textAlign="center">
-                {error}
-              </Typography>
-            )}
-            {success && (
-              <Typography color="primary" variant="body2" textAlign="center">
-                {success}
-              </Typography>
-            )}
-            <Button
-              variant="contained"
-              color="primary"
-              size="small"
-              onClick={handleRegister}
-              sx={{ mt: 1 }}
-            >
-              Register
-            </Button>
-          </>
+          <RegisterForm
+            registerName={registerName}
+            registerPassword={registerPassword}
+            registerConfirm={registerConfirm}
+            registerFirstName={registerFirstName}
+            registerLastName={registerLastName}
+            registerLocation={registerLocation}
+            registerDescription={registerDescription}
+            registerOccupation={registerOccupation}
+            error={error}
+            success={success}
+            confirmError={confirmError}
+            onRegisterNameChange={(e) => setRegisterName(e.target.value)}
+            onRegisterPasswordChange={(e) => setRegisterPassword(e.target.value)}
+            onRegisterConfirmChange={(e) => {
+              setRegisterConfirm(e.target.value);
+              setConfirmError(
+                registerPassword && e.target.value !== registerPassword
+                  ? "Passwords do not match"
+                  : ""
+              );
+            }}
+            onRegisterFirstNameChange={(e) => setRegisterFirstName(e.target.value)}
+            onRegisterLastNameChange={(e) => setRegisterLastName(e.target.value)}
+            onRegisterLocationChange={(e) => setRegisterLocation(e.target.value)}
+            onRegisterDescriptionChange={(e) => setRegisterDescription(e.target.value)}
+            onRegisterOccupationChange={(e) => setRegisterOccupation(e.target.value)}
+            onRegister={handleRegister}
+            onKeyDown={handleKeyDown}
+          />
         )}
       </Paper>
     </Box>
