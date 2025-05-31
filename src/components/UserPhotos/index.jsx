@@ -16,7 +16,7 @@ import fetchModel from "../../lib/fetchModelData";
 function UserPhotos() {
   const { userId } = useParams();
   const [user, setUser] = useState(null);
-  const [currentUser, setCurrentUser] = useState(null); // 👈 user đăng nhập từ session
+  const [currentUser, setCurrentUser] = useState(null);
   const [photos, setPhotos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
