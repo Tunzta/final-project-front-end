@@ -65,7 +65,7 @@ function UserList() {
         </Typography>
       </Box>
       <List component="nav">
-        {users.map((user) => (
+        {users.map((user, idx) => (
           <React.Fragment key={user._id}>
             <ListItem button component={Link} to={`/users/${user._id}`}>
               <ListItemText
@@ -77,7 +77,7 @@ function UserList() {
                 }}
               />
             </ListItem>
-            <Divider />
+            {idx < users.length - 1 && <Divider />}
           </React.Fragment>
         ))}
       </List>

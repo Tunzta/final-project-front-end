@@ -3,11 +3,12 @@ import {
   Typography,
   Box,
 } from "@mui/material";
-import { useParams} from "react-router-dom";
+import { useParams } from "react-router-dom";
 import fetchModel from "../../lib/fetchModelData";
 import PhotoCard from "./PhotoCard";
+import TopBar from "../TopBar"; // Thêm dòng này
 
-function UserPhotos({ photoAddedFlag }) {
+function UserPhotos({ photoAddedFlag, setPhotoAddedFlag, onLogout, loggedInUser }) {
   const { userId } = useParams();
   const [user, setUser] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
@@ -98,6 +99,8 @@ function UserPhotos({ photoAddedFlag }) {
     }
   };
 
+  const reloadPhotos = () => setPhotoAddedFlag((f) => !f);
+
   if (loading) {
     return <Typography variant="body1">Loading photos...</Typography>;
   }
@@ -115,29 +118,36 @@ function UserPhotos({ photoAddedFlag }) {
   }
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h5" gutterBottom>
-        Photos of {user.first_name} {user.last_name}
-      </Typography>
+    <>
+      <TopBar
+        loggedInUser={loggedInUser}
+        onLogout={onLogout}
+        onPhotoAdded={reloadPhotos} // truyền hàm reload
+      />
+      <Box sx={{ p: 3 }}>
+        <Typography variant="h5" gutterBottom>
+          Photos of {user.first_name} {user.last_name}
+        </Typography>
 
-      {photos.length === 0 ? (
-        <Typography>No photos available for this user.</Typography>
-      ) : (
-        photos.map((photo) => (
-          <PhotoCard
-            key={photo._id}
-            photo={photo}
-            user={user}
-            currentUser={currentUser}
-            commentInput={commentInputs[photo._id] || ""}
-            submitting={submitting[photo._id]}
-            onCommentInputChange={handleCommentInputChange}
-            onAddComment={handleAddComment}
-            formatDateTime={formatDateTime}
-          />
-        ))
-      )}
-    </Box>
+        {photos.length === 0 ? (
+          <Typography>No photos available for this user.</Typography>
+        ) : (
+          photos.map((photo) => (
+            <PhotoCard
+              key={photo._id}
+              photo={photo}
+              user={user}
+              currentUser={currentUser}
+              commentInput={commentInputs[photo._id] || ""}
+              submitting={submitting[photo._id]}
+              onCommentInputChange={handleCommentInputChange}
+              onAddComment={handleAddComment}
+              formatDateTime={formatDateTime}
+            />
+          ))
+        )}
+      </Box>
+    </>
   );
 }
 

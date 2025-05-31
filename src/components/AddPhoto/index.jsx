@@ -1,9 +1,11 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import fetchModel from "../../lib/fetchModelData";
 
 function AddPhoto({ onPhotoAdded }, ref) {
   const fileInputRef = React.useRef();
   const navigate = useNavigate();
+  const { userId: currentUserIdInUrl } = useParams();
 
   // gọi từ TopBar khi bấm nút
   React.useImperativeHandle(
@@ -22,18 +24,23 @@ function AddPhoto({ onPhotoAdded }, ref) {
     formData.append("photo", file);
 
     try {
-      const response = await fetch("http://localhost:8081/api/photosOfUser/photos/new", {
-        method: "POST",
-        body: formData,
-        credentials: "include",
-      });
+      const data = await fetchModel(
+        "http://localhost:8081/api/photosOfUser/photos/new",
+        {
+          method: "POST",
+          body: formData,
+          // Không cần headers, fetchModel sẽ tự thêm Authorization nếu có token
+          // Không set Content-Type khi dùng FormData!
+          credentials: "include",
+        }
+      );
 
-      const data = await response.json();
-
-      if (response.ok) {
+      if (data && data.photo) {
         alert("Photo uploaded!");
         if (onPhotoAdded) onPhotoAdded(data.photo);
-        navigate(`/photos/${data.photo.user_id}`);
+        if (currentUserIdInUrl !== data.photo.user_id) {
+          navigate(`/photos/${data.photo.user_id}`);
+        }
       } else {
         alert("Failed to upload photo: " + (data?.error || "Unknown error"));
       }

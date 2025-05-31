@@ -12,20 +12,20 @@ import fetchModel from "./lib/fetchModelData";
 
 function App() {
   const [loggedInUser, setLoggedInUser] = useState(null);
-  const [photoAddedFlag, setPhotoAddedFlag] = useState(false); // Thêm state này
+  const [photoAddedFlag, setPhotoAddedFlag] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Gọi API /api/me để lấy lại user từ token (nếu có)
     fetchModel("http://localhost:8081/api/me").then((data) => {
       if (data && !data.error) setLoggedInUser(data);
+      else setLoggedInUser(null);
     });
   }, []);
 
   const handleLogout = async () => {
-    await fetch("http://localhost:8081/api/admin/logout", {
-      method: "POST",
-      credentials: "include",
-    });
+    // Nếu backend có endpoint logout, có thể gọi, nhưng chủ yếu là xóa token phía client
+    localStorage.removeItem("token"); // Xóa JWT khỏi localStorage
     setLoggedInUser(null);
     navigate("/");
   };
@@ -61,7 +61,12 @@ function App() {
                   <Route
                     path="/photos/:userId"
                     element={
-                      <UserPhotos photoAddedFlag={photoAddedFlag} />
+                      <UserPhotos
+                        photoAddedFlag={photoAddedFlag}
+                        setPhotoAddedFlag={setPhotoAddedFlag}
+                        onLogout={handleLogout}
+                        loggedInUser={loggedInUser}
+                      />
                     }
                   />
                   <Route

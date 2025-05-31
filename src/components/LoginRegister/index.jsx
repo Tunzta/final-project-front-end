@@ -32,11 +32,13 @@ function LoginRegister({ onLoginSuccess }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ login_name: loginName, password }),
       });
-      if (!user) {
+      if (!user || !user.token) {
         setError("Wrong login name or password");
         return;
       }
-      onLoginSuccess(user);
+      // Lưu JWT vào localStorage
+      localStorage.setItem("token", user.token);
+      onLoginSuccess(user.user);
     } catch {
       setError("Server error");
     }
